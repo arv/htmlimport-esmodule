@@ -14,6 +14,7 @@
       var parts = address.match(/^html-import:([^#]+)(?:#(.+))?$/);
       var path = parts[1];
       var name = parts[2];
+      // TODO: wrong document
       var importElements = document.querySelectorAll('link[rel=import][href]');
 
       for (var i = 0; i < importElements.length; i++) {
@@ -47,14 +48,27 @@
   };
 
   var normalize = System.normalize;
-  System.normalize = function(name, referrer) {
+  System.normalize = function(name, referrer, referrerAddress) {
     console.log(arguments);
     if (/\.html$/.test(name)) {
-      var base = normalize.call(System, name.slice(0, -5));
+
+      if (/^html-import:/.test(referrer) &&
+          /^html-import:/.test(referrerAddress)) {
+        referrer = referrer.slice('html-import:'.length);
+        referrerAddress = referrerAddress.slice('html-import:'.length);
+      }
+
+      var base = normalize.call(System, name.slice(0, -5), referrer, referrerAddress);
       return 'html-import:' + base + '.html';
     }
 
     if (/^#/.test(name)) {
+      if (/^html-import:/.test(referrer) &&
+          /^html-import:/.test(referrerAddress)) {
+        referrer = referrer.slice('html-import:'.length);
+        referrerAddress = referrerAddress.slice('html-import:'.length);
+      }
+      var base = normalize.call(System, name.slice(0, -5), referrer, referrerAddress);
       return 'html-import:' + name;
     }
 
@@ -96,6 +110,8 @@
         });
       }
     }
+
+    // TODO: recursive walk
   }
 
   document.addEventListener('load', function(e) {
