@@ -15,6 +15,10 @@
 (function() {
   'use strict';
 
+  /**
+   * Recursively looks through all imported documents looking for
+   * link[rel=import] that matches a certain address.
+   */
   function findMatchingImportElement(doc, address) {
     if (!doc)
       return null;
@@ -63,14 +67,15 @@
   System.locate = function(load) {
     var res = locate.call(this, load);
     if (/\.html$/.test(load.name)) {
+      // The default locate adds '.js'. Remove it.
       return res.slice(0, -3);
     }
     return res;
   };
 
   function defineModulesInImportElement(importElement) {
-    // 1. <module> with no name gets mapped to the URL of the import.
-    // 2. <module name=N> gets mapped to URL#name
+    // Recursively finds script[type=module] in all import documents
+    // and defines and executes them.
 
     var doc = importElement.import;
     var importElements = doc.querySelectorAll('link[rel=import][href]');
@@ -82,7 +87,8 @@
     if (scriptElement) {
       var name = doc.baseURI;
 
-      // TODO(arv): This looks pretty flawed.
+      // TODO(arv): This looks pretty flawed. Would need a less error prone way
+      // to define something when all we have is a URL.
       if (name.indexOf(System.baseURL) === 0)
         name = name.slice(System.baseURL.length);
 
