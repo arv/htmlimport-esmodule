@@ -15,6 +15,9 @@
 (function() {
   'use strict';
 
+  var moduleTagSelector = 'script[type=module]:not([name]):not([href])';
+  var importTagSelector = 'link[rel=import][href]';
+
   /**
    * Recursively looks through all imported documents looking for
    * link[rel=import] that matches a certain address.
@@ -22,7 +25,7 @@
   function findMatchingImportElement(doc, address) {
     if (!doc)
       return null;
-    var importElements = doc.querySelectorAll('link[rel=import][href]');
+    var importElements = doc.querySelectorAll(importTagSelector);
     for (var i = 0; i < importElements.length; i++) {
       var importElement = importElements[i];
       if (address === importElement.href)
@@ -48,7 +51,7 @@
               ' has no document. Did it fail to load?');
         }
         var scriptElement =
-            doc.querySelector('script[type=module]:not([name])');
+            doc.querySelector(moduleTagSelector);
 
         if (!scriptElement) {
           return Promise.reject('HTMLImport for ' + address +
@@ -78,12 +81,12 @@
     // and defines and executes them.
 
     var doc = importElement.import;
-    var importElements = doc.querySelectorAll('link[rel=import][href]');
+    var importElements = doc.querySelectorAll(importTagSelector);
     for (var i = 0; i < importElements.length; i++) {
       defineModulesInImportElement(importElements[i]);
     }
 
-    var scriptElement = doc.querySelector('script[type=module]:not([name])');
+    var scriptElement = doc.querySelector(moduleTagSelector);
     if (scriptElement) {
       var name = doc.baseURI;
 
