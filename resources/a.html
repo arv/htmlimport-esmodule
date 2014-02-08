@@ -3,12 +3,10 @@
 <link rel="import" href="b.html">
 
 <script type="module">
-
+console.log('script type=module in respources/a.html');
 export var a = 'AAA';
-// export {b as a} from './b.html';
-
+export {b} from './b.html';
 </script>
-
 
 <script>
 console.log('plain script in respources/a.html');

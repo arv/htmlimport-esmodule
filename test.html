@@ -1,122 +1,19 @@
 <!doctype html>
 
 <script src="es6-module-loader.js"></script>
-
-<script>
-
-(function() {
-  'use strict';
-
-  var fetch = System.fetch;
-  System.fetch = function(load) {
-    if (/^html-import:/.test(load.address)) {
-      var address = load.address;
-      var parts = address.match(/^html-import:([^#]+)(?:#(.+))?$/);
-      var path = parts[1];
-      var name = parts[2];
-      var importElements = document.querySelectorAll('link[rel=import][href]');
-
-      for (var i = 0; i < importElements.length; i++) {
-        var importElement = importElements[i];
-        var url = new URL(importElement.href);
-        url.hash = '';
-        if (url.href === path + '#')
-          break;
-        else
-          importElement = null;
-      }
-
-      if (importElement && importElement.import) {
-        var selector = 'script[type=module]';
-        if (name)
-          selector += '[name=' + JSON.stringify(name) + ']';
-        else
-          selector += ':not([name])';
-        var scriptElement = importElement.import.querySelector(selector);
-        if (!scriptElement)
-          return Promise.reject(new Error(path));
-
-        // System.define(name, source, { address: address });
-        return Promise.resolve(scriptElement.innerHTML);
-      } else {
-
-      }
-    }
-
-    return fetch.call(this, load);
-  };
-
-  var normalize = System.normalize;
-  System.normalize = function(name, referrer) {
-    console.log(arguments);
-    if (/\.html$/.test(name)) {
-      var base = normalize.call(System, name.slice(0, -5));
-      return 'html-import:' + base + '.html';
-    }
-
-    if (/^#/.test(name)) {
-      return 'html-import:' + name;
-    }
-
-    return normalize.apply(this, arguments);
-  };
-
-  var locate = System.locate;
-  System.locate = function(load) {
-    var name = load.name;
-    if (/^html-import:/.test(name)) {
-      var res = locate.call(this, {
-        name: name.slice('html-import:'.length),
-        metadata: load.metadata
-      });
-      return 'html-import:' + res.replace(/\.js$/, '');
-    }
-    return locate.call(this, load);
-  };
-
-  function defineModulesInImportElement(linkElement) {
-    // 1. <module> with no name gets mapped to the URL of the import.
-    // 2. <module name=N> gets mapped to URL#name
-
-    var doc = linkElement.import;
-    var moduleElements = doc.querySelectorAll('script[type=module]');
-    for (var i = 0; i < moduleElements.length; i++) {
-      var mod = moduleElements[i];
-      var name = 'html-import:' + doc.baseURI;
-      var nameAttr = mod.getAttribute('name');
-      if (nameAttr)
-        name += '#' + nameAttr;
-      var source = mod.innerHTML;
-      var p = System.define(name, source);
-      if (!nameAttr) {
-        // Force execution if no name
-        p.then(function() {
-          debugger;
-          System.get(name);
-        });
-      }
-    }
-  }
-
-  document.addEventListener('load', function(e) {
-    var el = e.target;
-    if (el.localName === 'link' && el.rel === 'import') {
-      defineModulesInImportElement(el);
-    }
-  }, true);
-
-})();
-
-</script>
+<script src="htmlimport-esmodule.js"></script>
 
 <link rel="import" href="resources/a.html">
 
 <h1>Test</h1>
 
+<p>This requires native HTMLImports. See console fore result.</p>
+
 <script type="module">
 
-import {a} from './resources/a.html';
+import {a, b} from './resources/a.html';
 console.log(a);
+console.log(b);
 
 import {C} from './resources/C';
 new C().method();
