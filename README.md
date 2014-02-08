@@ -1,7 +1,7 @@
 HTMLImport & ES6 Module
 ===================
 
-HTMLImport & ES6 Module are sitting in a tree -- K.I.S.S.I.N.G
+HTMLImport & ES6 Module are sitting in a tree -- K.I.S.S.I.N.G.
 
 This is an exploration of using ES6 modules in compination with HTMLImports.
 
@@ -16,7 +16,7 @@ export var a = 'A';
 </script>
 ```
 
-To import from an HTMLImport you need to use both an`link[rel=import]` as well as an ImportDeclaration.
+To import from an HTMLImport you need to use both a `link[rel=import]` as well as an ImportDeclaration.
 
 ```html
 // test.html
