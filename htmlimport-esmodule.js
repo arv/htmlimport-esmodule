@@ -15,7 +15,7 @@
 (function() {
   'use strict';
 
-  var moduleTagSelector = 'script[type=module]:not([name]):not([href])';
+  var moduleTagSelector = 'script[type=module]:not([name]):not([src])';
   var importTagSelector = 'link[rel=import][href]';
 
   /**
@@ -106,6 +106,12 @@
           System.get(name);
         });
       }
+    }
+
+    var otherScriptElements = doc.querySelectorAll('script[type=module][src]');
+    for (var i = 0; i < otherScriptElements.length; i++) {
+      var url = new URL(otherScriptElements[i].src, doc.baseURI);
+      System.load(undefined, {address: url.href});
     }
   }
 
