@@ -1,7 +1,7 @@
 HTMLImport & ES6 Module
 ===================
 
-HTMLImport & ES6 Module sitting in a tree,K-I-S-S-I-N-G.
+HTMLImport & ES6 Module sitting in a tree, K-I-S-S-I-N-G.
 
 This is an exploration of using ES6 modules in compination with HTMLImports.
 
