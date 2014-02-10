@@ -20,7 +20,7 @@ To import from an HTMLImport you need to use both a `link[rel=import]` as well a
 
 ```html
 // test.html
-<link rel="import" href="test.html">
+<link rel="import" href="a.html">
 <script type="module">
 import {a} from './a.html';
 </script>
